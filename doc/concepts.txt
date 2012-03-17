@@ -1,0 +1,8 @@
+* Audio source (CD drive, ISO file, etc.)
+* Audio extraction (AKA "ripper")
+* Album metadata, track metadata
+* Metadata provider (MusicBrainz, CDDB, etc.)
+* Album art provider (Amazon, etc.)
+* Encoder (FLAC, Ogg Vorbis, LAME, etc.)
+* Tagger (apply metadata to encoded audio files)
+* Post-processing (apply ReplayGain, etc.)

@@ -1,0 +1,25 @@
+Lyra is the open source, cross-platform CD ripper for the discerning audiophile.
+It supports multiple codecs, including FLAC, Ogg Vorbis, and MP3.  It features
+an extensible plugin system that allows new codecs and other features to be
+easily incorporated.
+
+Some of Lyra's current and planned features include:
+
+* "Secure mode" audio extraction with error correction and drive cache
+  management
+* Querying of CD-ROM drive's specifications from the online DAE Drive Features
+  Database for optimal audio extraction
+* Verification of rips with AccurateRip
+* CD metadata retrieval from MusicBrainz, Amazon.com, and CDDB/FreeDB, as well
+  as CD-TEXT from the CD itself
+* Automatic download of album cover art
+* Automatic download of song lyrics
+* Rip CD once, batch encode to multiple formats
+* Advanced metadata tagging facilities with support for custom tags
+* Flexible file naming support based on metadata tags
+* Support for FLAC, Ogg Vorbis, and MP3 out of the box
+* Support for any codecs using plugins
+* Gapless encoding for all built-in encoders
+* Support for embedding cuesheets into encoded files
+* Volume normalization using ReplayGain
+
