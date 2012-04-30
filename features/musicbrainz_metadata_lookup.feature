@@ -3,6 +3,7 @@ Feature: MusicBrainz metadata lookup
   As a discerning music listener
   I want to lookup audio metadata from MusicBrainz
 
+  @ext
   Scenario: Lookup metadata for MusicBrainz DiscID
     Given an audio CD with MusicBrainz DiscID "ofNUMtU1O38OTXZBTop_w9LG.O4-"
     When I lookup metadata for the CD
