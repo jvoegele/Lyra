@@ -1,0 +1,59 @@
+#!/usr/bin/env ruby
+
+# 1.9 adds realpath to resolve symlinks; 1.8 doesn't
+# have this method, so we add it so we get resolved symlinks
+# and compatibility
+unless File.respond_to? :realpath
+  class File #:nodoc:
+    def self.realpath path
+      return realpath(File.readlink(path)) if symlink?(path)
+      path
+    end
+  end
+end
+$: << File.expand_path(File.dirname(File.realpath(__FILE__)) + '/../lib')
+
+require 'rubygems'
+require 'gli'
+require 'lyra'
+require 'lyra_version'
+
+include GLI
+
+program_desc 'Command-line interface to Lyra'
+version Lyra::VERSION
+
+desc 'Print information about the disc in the CD-ROM drive'
+arg_name '[device_path]'
+command :'disc-info' do |c|
+  c.desc 'Print extra information about tracks'
+  c.switch %w[verbose v]
+  c.action do |global_options,options,args|
+    device = args[0]
+    cmd = Lyra::PrintDiscInfoCommand.new(device, verbose: options[:verbose])
+    cmd.execute
+  end
+end
+
+pre do |global,command,options,args|
+  # Pre logic here
+  # Return true to proceed; false to abort and not call the
+  # chosen command
+  # Use skips_pre before a command to skip this block
+  # on that command only
+  true
+end
+
+post do |global,command,options,args|
+  # Post logic here
+  # Use skips_post before a command to skip this
+  # block on that command only
+end
+
+on_error do |exception|
+  # Error logic here
+  # return false to skip default error handling
+  true
+end
+
+exit GLI.run(ARGV)
