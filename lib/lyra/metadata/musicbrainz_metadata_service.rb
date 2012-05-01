@@ -50,7 +50,7 @@ module Lyra::Metadata
       }
       best_release.entity
     end
-require 'pry'
+
     def create_metadata_from_release(release)
       result = AlbumMetadata.new
       result.artist = release.artist.name
