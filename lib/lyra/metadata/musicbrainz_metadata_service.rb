@@ -6,13 +6,12 @@ module Lyra::Metadata
     include MusicBrainz
 
     def query(criteria)
-      query = Webservice::Query.new
+      mb_query = Webservice::Query.new
 
       if disc_id = criteria[:disc_id]
-        releases = query.get_releases(:discid => disc_id)
+        releases = mb_query.get_releases(discid: disc_id, cdstubs: true)
         release = select_best_release(releases)
         album = create_metadata_from_release(release)
-
         add_tracks(album, release.tracks)
       end
 
@@ -51,18 +50,24 @@ module Lyra::Metadata
       }
       best_release.entity
     end
-
+require 'pry'
     def create_metadata_from_release(release)
       result = AlbumMetadata.new
       result.artist = release.artist.name
+      result.artistsort = release.artist.sort_name
+      result.albumartist = release.artist.name
+      result.albumartistsort = release.artist.sort_name
       result.album = release.title
       result.amazon_asin = release.asin
-      result.MUSICBRAINZ_ALBUMID = release.id
-      result.MUSICBRAINZ_ALBUMTYPE= release.types.first
-      result.MUSICBRAINZ_ARTISTID = release.artist.id
+      result.musicbrainz_albumid = release.id
+      result.musicbrainz_albumtype= MusicBrainz::Utils.remove_namespace(release.types.first)
+      result.musicbrainz_artistid = release.artist.id
+      unless release.single_artist_release?
+        result.compilation = true
+      end
 
       release_event = release.release_events.first
-      result.RELEASECOUNTRY = release_event.country
+      result.releasecountry = release_event.country
       result.date = release_event.date.to_s
 
       result
