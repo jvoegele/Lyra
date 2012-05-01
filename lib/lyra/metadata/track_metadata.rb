@@ -1,7 +1,7 @@
 module Lyra::Metadata
   class TrackMetadata < AudioMetadata
 
-    attr_reader :parent_album
+    attr_accessor :parent_album
 
     def initialize(parent_album, hash={})
       unless parent_album.is_a?(AlbumMetadata)
@@ -11,14 +11,12 @@ module Lyra::Metadata
       super(hash)
     end
 
-    def [](field_name)
-      self.get(field_name) || @parent_album[field_name]
+    def has_field?(field_name)
+      super(field_name) || @parent_album.has_field?(field_name)
     end
 
-  protected
-
-    def parent_album=(album_metadata)
-      @parent_album = album_metadata
+    def [](field_name)
+      self.get(field_name) || @parent_album[field_name]
     end
   end
 end

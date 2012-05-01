@@ -25,6 +25,22 @@ shared_examples_for "AudioMetadata" do
     metadata.album.should == 'Volta'
   end
 
+  it "detects the presence of fields" do
+    metadata.should_not have_field('arbitrary')
+    metadata.should_not have_field('ARBITRARY')
+    metadata.arbitrary = '42'
+    metadata.should have_field('ARBITRARY')
+    metadata.should have_field('arbitrary')
+
+    metadata.should_not have_field('compilation')
+    metadata.compilation = false
+    metadata.should have_field('compilation')
+
+    metadata.should_not have_field('careless')
+    metadata['careless'] = nil
+    metadata.should have_field('careless')
+  end
+
   it "supports multiple values for fields" do
     metadata['genre'].should be_nil
     metadata['genre'] = %w[Rock Grunge]

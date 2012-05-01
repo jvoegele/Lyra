@@ -48,6 +48,11 @@ describe TrackMetadata do
     track.artist.should_not == broken.artist
     broken.artist.should == 'Nine Inch Nails'
     track.artist.should == 'Trent Reznor'
-    
+  end
+
+  it "overrides has_field? to check containing album" do
+    track = broken.tracks[4]
+    track.should have_field('album')
+    track.should have_field('date')
   end
 end
