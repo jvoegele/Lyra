@@ -1,4 +1,8 @@
 module Lyra::Metadata
+  # Metadata for an audio track on an album.  Instances of TrackMetadata are
+  # associated with the AlbumMetadata for the containing album.  All metadata
+  # for the containing album is inherited by the track, but metadata associated
+  # explicitly with the track overrides the inherited album metadata.
   class TrackMetadata < AudioMetadata
 
     attr_accessor :parent_album

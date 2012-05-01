@@ -1,10 +1,17 @@
 module Lyra::Metadata
-  class AlbumMetadata < AudioMetadata
-    attr_reader :tracks
 
+  # Metadata for an album.
+  #
+  # AlbumMetadata is distinct from its base AudioMetadata class in that it
+  # maintains a collection of TrackMetadata.
+  class AlbumMetadata < AudioMetadata
     def initialize(hash={})
       super
       @tracks = Array.new
+    end
+
+    def tracks
+      @tracks.dup.freeze
     end
 
     def add_track(track)
