@@ -10,9 +10,10 @@ module Lyra::Metadata
     def add_track(track)
       track_metadata = case track
       when TrackMetadata
+        track.parent_album = self
         track
       when String
-        TrackMetadata.new(title: track)
+        TrackMetadata.new(self, title: track)
       end
       @tracks << track_metadata
       unless track_metadata.tracknumber

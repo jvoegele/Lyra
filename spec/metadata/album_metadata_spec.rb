@@ -6,8 +6,11 @@ include Lyra::Metadata
 describe AlbumMetadata do
   it_behaves_like "AudioMetadata"
 
+  before(:each) do
+    @metadata = AlbumMetadata.new
+  end
   let(:metadata) {
-    AlbumMetadata.new
+    @metadata
   }
 
   context "#tracks" do
@@ -16,7 +19,7 @@ describe AlbumMetadata do
     end
 
     it "can add tracks as TrackMetadata objects" do
-      track = TrackMetadata.new(title: 'Track 1')
+      track = TrackMetadata.new(metadata, title: 'Track 1')
       metadata.add_track(track)
       metadata.tracks.should have_exactly(1).items
       metadata.tracks.first.title.should == 'Track 1'

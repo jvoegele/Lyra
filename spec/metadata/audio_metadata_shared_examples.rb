@@ -2,7 +2,7 @@
 
 shared_examples_for "AudioMetadata" do
 
-  let(:metadata) { described_class.new }
+  let(:metadata) { @metadata }
 
   it "supports element reference notation" do
     metadata['ARTIST'].should be_nil
@@ -32,8 +32,10 @@ shared_examples_for "AudioMetadata" do
   end
 
   it "can be initialized with a Hash" do
-    metadata = described_class.new(artist: 'Wilco', album: 'The Whole Love')
-    metadata.artist.should == 'Wilco'
-    metadata.album.should == 'The Whole Love'
+    unless described_class == TrackMetadata
+      metadata = described_class.new(artist: 'Wilco', album: 'The Whole Love')
+      metadata.artist.should == 'Wilco'
+      metadata.album.should == 'The Whole Love'
+    end
   end
 end

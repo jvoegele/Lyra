@@ -70,7 +70,7 @@ module Lyra::Metadata
 
     def add_tracks(album, tracks)
       tracks.each do |t|
-        track = TrackMetadata.new
+        track = TrackMetadata.new(album)
         track.MUSICBRAINZ_TRACKID = t.id
         track.title = t.title
         track.duration = format_duration(t.duration)
