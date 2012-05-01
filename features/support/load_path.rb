@@ -1,4 +1,5 @@
 require 'pathname'
+require 'pry'
 
 CUCUMBER_DIR = Pathname(__FILE__).dirname.parent
 PROJECT_DIR = CUCUMBER_DIR.parent

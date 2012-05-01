@@ -10,7 +10,7 @@ describe MusicBrainzMetadataService  do
 
   context "#query" do
     let(:metadata) {
-      musicbrainz.query(disc_id: disc_id)
+      musicbrainz.lookup_by_disc_id(disc_id)
     }
     it "finds a release when given a disc ID" do
       metadata.should_not be_nil

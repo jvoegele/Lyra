@@ -37,8 +37,21 @@ Feature: MusicBrainz metadata lookup
     And the "ALBUM" field should be "Mellon Collie and the Infinite Sadness"
     And the "ARTISTSORT" field should be "Smashing Pumpkins"
     And the "DATE" field should be "1995-10-24"
-    #And the "DISCNUMBER" field should be "1"
-    #And the "DISCTOTAL" field should be "2"
+    And the "DISCNUMBER" field should be "1"
+    And the "DISCTOTAL" field should be "2"
+    And the "DISCSUBTITLE" field should be "Dawn to Dusk"
+
+  @ext
+  Scenario: Lookup metadata for the second disc of a two disc set
+    Given an audio CD with MusicBrainz DiscID "GsMUac4YTa5qTp2V0E.0XaEJI1Q-"
+    When I lookup metadata for the CD
+    Then the "ARTIST" field should be "The Smashing Pumpkins"
+    And the "ALBUM" field should be "Mellon Collie and the Infinite Sadness"
+    And the "ARTISTSORT" field should be "Smashing Pumpkins"
+    And the "DATE" field should be "1995-10-24"
+    And the "DISCNUMBER" field should be "2"
+    And the "DISCTOTAL" field should be "2"
+    And the "DISCSUBTITLE" field should be "Twilight to Starlight"
 
   @ext
   Scenario: Lookup metadata for a multiple artist release
@@ -50,7 +63,6 @@ Feature: MusicBrainz metadata lookup
     And the "ARTISTSORT" field should be "Various Artists"
     And the "ALBUMARTIST" field should be "Various Artists"
     And the "ALBUMARTISTSORT" field should be "Various Artists"
-    And the "COMPILATION" field should be "true"
     And the tracks should be:
       | Title                          | Artist                | ArtistSort        |
       | Would?                         | Alice in Chains       | Alice in Chains   |

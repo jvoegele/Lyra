@@ -5,7 +5,7 @@ require 'rake'
 
 dependencies = Hash[
   'gli', '~> 1.6.0',
-  'rbrainz', '~> 0.5.2',
+  'musicbrainz-ruby', '~> 0.4.0',
   'locale', '~> 2.0.5',
   'mb-discid', '~> 0.1.5',
   'terminal-table', '~> 1.4.5'

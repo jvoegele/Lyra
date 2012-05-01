@@ -1,74 +1,76 @@
-require 'rbrainz'
+require 'musicbrainz'
 require 'locale'
 
 module Lyra::Metadata
   class MusicBrainzMetadataService
     include MusicBrainz
 
-    def query(criteria)
-      mb_query = Webservice::Query.new
+    def lookup_by_disc_id(disc_id)
+      brainz = MusicBrainz::Client.new
+      query_result = brainz.discid(discid: disc_id,
+                                   inc: "artists+artist-credits+labels+recordings+release-groups")
+      releases = [query_result.disc.release_list.release].flatten
+      release = select_best_release(releases)
+      release['mb_disc_id'] = disc_id
 
-      if disc_id = criteria[:disc_id]
-        releases = mb_query.get_releases(discid: disc_id, cdstubs: true)
-        release = select_best_release(releases)
-        album = create_metadata_from_release(release)
-        add_tracks(album, release.tracks)
+      def release.media
+        @__release_media ||= [self.medium_list.medium].flatten
       end
 
+      def release.medium
+        @__release_medium ||= case self.media.size
+        when 1
+          self.media.first
+        else
+          self.media.find { |medium|
+            medium.disc_list.disc.any? {|disc| disc.id == self['mb_disc_id']}
+          }
+        end
+      end
+
+      album = create_metadata_from_release(release)
+      add_tracks(album, release.medium.track_list.track)
       album
     end
 
   protected
 
-    RELEASE_INCLUDES = {
-      :artist => true,
-      :counts => true,
-      :release_groups => true,
-      :release_events => true,
-      :discs => true,
-      :tracks => true,
-      :labels => true,
-      :isrcs => true,
-      :url_rels => true,
-      :tags => true
-    }
-
-    TRACK_INCLUDES = {
-      artist: true,
-      duration: true
-    }
-
     def select_best_release(releases)
       region = Locale.candidates.first.region
+      releases = releases.sort_by {|r| r.date}
       best_release = releases.find { |r|
-        release_event = r.entity.release_events.first
-        release_event.country == region
+        r.country == region
       }
-      best_release ||= releases.min_by { |r|
-        release_event = r.entity.release_events.first
-        release_event.date
-      }
-      best_release.entity
+      best_release ||= releases.first
+      best_release
     end
 
     def create_metadata_from_release(release)
       result = AlbumMetadata.new
-      result.artist = release.artist.name
-      result.artistsort = release.artist.sort_name
-      result.albumartist = release.artist.name
-      result.albumartistsort = release.artist.sort_name
+      artist_credit = release.artist_credit.name_credit
+      result.artist = artist_credit.name || artist_credit.artist.name
+      result.artistsort = release.artist_credit.name_credit.artist.sort_name
+      result.albumartist = result.artist
+      result.albumartistsort = result.artistsort
       result.album = release.title
       result.amazon_asin = release.asin
       result.musicbrainz_albumid = release.id
-      result.musicbrainz_albumtype= MusicBrainz::Utils.remove_namespace(release.types.first)
-      result.musicbrainz_artistid = release.artist.id
-      unless release.single_artist_release?
-        result.compilation = true
-      end
+      result.musicbrainz_albumtype= release.release_group.type
+      result.musicbrainz_artistid = release.artist_credit.name_credit.artist.id
 
-      release_event = release.release_events.first
-      result.releasecountry = release_event.country
-      result.date = release_event.date.to_s
+      result.releasecountry = release.country
+      result.date = release.date
+
+      if release.media.size > 1
+        medium = release.medium
+        if medium
+          result.discnumber = medium.position
+          result.disctotal = release.media.size
+          if subtitle = medium.title
+            result.discsubtitle = subtitle
+          end
+        end
+      end
 
       result
     end
@@ -76,14 +78,20 @@ module Lyra::Metadata
     def add_tracks(album, tracks)
       tracks.each do |t|
         track = TrackMetadata.new(album)
-        track.MUSICBRAINZ_TRACKID = t.id
-        track.title = t.title
-        track.duration = format_duration(t.duration)
-        track.MUSICBRAINZ_ARTISTID = t.artist.id
-        track.artist = t.artist.name
-        track.artistsort = t.artist.sort_name
+        track.musicbrainz_trackid = t.recording.id
+        track.title = t.recording.title
+        track.duration = format_duration(t['length'].to_i)
+
+        name_credit = t.recording.artist_credit.name_credit
+        track_artist = name_credit.artist
+        if track_artist.id != album.musicbrainz_artistid
+          track.musicbrainz_artistid = track_artist.id
+          track.artist = name_credit.name || track_artist.name
+          track.artistsort = track_artist.sort_name
+        end
         album << track
       end
+
     end
 
     def format_duration(duration)

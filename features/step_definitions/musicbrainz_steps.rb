@@ -4,11 +4,11 @@ end
 
 When /^I lookup metadata for the CD$/ do
   musicbrainz = Lyra::Metadata::MusicBrainzMetadataService.new
-  @album_metadata = musicbrainz.query(disc_id: @disc_id)
+  @album_metadata = musicbrainz.lookup_by_disc_id(@disc_id)
 end
 
 Then /^the "([^"]*)" field should be "([^"]*)"$/ do |field, value|
-  @album_metadata[field].should == value
+  @album_metadata[field].should == value.to_s
 end
 
 Then /^the tracks should be:$/ do |table|
