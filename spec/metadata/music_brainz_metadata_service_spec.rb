@@ -18,7 +18,7 @@ describe MusicBrainzMetadataService  do
     end
 
     it "chooses the release that matches the current locale region" do
-      metadata.RELEASECOUNTRY.should == Locale.candidates.first.region
+      metadata.releasecountry.should == Locale.candidates.first.region
     end
   end
 end

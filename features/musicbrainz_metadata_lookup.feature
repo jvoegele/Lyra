@@ -10,6 +10,10 @@ Feature: MusicBrainz metadata lookup
     Then the "ARTIST" field should be "Björk"
     And the "ARTISTSORT" field should be "Björk"
     And the "ALBUM" field should be "Medúlla"
+    And the "ASIN" field should be "B0002JUXB0"
+    And the "MUSICBRAINZ_ALBUMID" field should be "31e19128-df0a-4bd7-a5ca-376790c375ff"
+    And the "MUSICBRAINZ_ARTISTID" field should be "87c5dedd-371d-4a53-9f7f-80522fb7f3cb"
+    And the "RELEASECOUNTRY" field should be "US"
     And the "MUSICBRAINZ_ALBUMTYPE" field should be "Album"
     And the "DATE" field should be "2004-08-31"
     And the tracks should be:

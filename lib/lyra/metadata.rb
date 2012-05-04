@@ -3,6 +3,7 @@ module Lyra
   end
 end
 
+require 'metadata/fields'
 require 'metadata/audio_metadata'
 require 'metadata/track_metadata'
 require 'metadata/album_metadata'

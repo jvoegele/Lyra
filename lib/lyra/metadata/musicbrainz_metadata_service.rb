@@ -53,7 +53,7 @@ module Lyra::Metadata
       result.albumartist = result.artist
       result.albumartistsort = result.artistsort
       result.album = release.title
-      result.amazon_asin = release.asin
+      result.asin = release.asin
       result.musicbrainz_albumid = release.id
       result.musicbrainz_albumtype= release.release_group.type
       result.musicbrainz_artistid = release.artist_credit.name_credit.artist.id

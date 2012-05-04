@@ -21,6 +21,39 @@ module Lyra::Metadata
   # "field" avoids this ambiguity, as it always refers to an individual
   # field of metadata.
   class AudioMetadata
+    include Enumerable
+
+    # Registers a field for special handling.
+    # TODO - add more documentation
+    def self.register_field(arg={})
+      case arg
+      when Hash
+        field_name = arg[:name]
+        method_name = (arg[:method_name] || field_name).to_s
+
+        reader_name = method_name.downcase.gsub(/[^a-zA-Z0-9_]/, '_')
+        reader_name.prepend('_') if reader_name !~ /^[a-zA-Z_]/
+        define_method(reader_name.to_sym) do |*args|
+          case args.size
+          when 0
+            self[field_name]
+          when 1
+            self[field_name] = args.first
+          else
+            raise ArgumentError
+          end
+        end
+
+        writer_name = "#{reader_name}="
+        define_method(writer_name.to_sym) do |value|
+          self[field_name] = value
+        end
+      end
+    end
+
+    Fields.constants.each do |const|
+      register_field(name: Fields.const_get(const), method_name: const)
+    end
 
     # Returns the normalized form of the given name. The normalized form is
     # defined as name.to_s.upcase.
@@ -44,6 +77,16 @@ module Lyra::Metadata
       @data.has_key?(AudioMetadata.field_name_for(field_name))
     end
 
+    def field_names
+      @data.keys
+    end
+
+    def each
+      for name in self.field_names
+        yield(name, self[name])
+      end
+    end
+
     # Returns the value of the given field_name, or nil if the field is not present.
     # Note that the value may be an Array if multiple values are present for the
     # given field_name.
@@ -59,18 +102,6 @@ module Lyra::Metadata
     # AudioMetadata.field_name_for(name) method prior to being stored.
     def []=(field_name, value)
       set(field_name, value)
-    end
-
-    def method_missing(name, *args)
-      name = name.to_s.gsub(/=$/, '')
-      case args.size
-      when 0
-        self[name.to_s]
-      when 1
-        self[name.to_s] = args.first
-      else
-        super
-      end
     end
 
   protected

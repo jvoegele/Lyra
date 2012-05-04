@@ -28,7 +28,7 @@ shared_examples_for "AudioMetadata" do
   it "detects the presence of fields" do
     metadata.should_not have_field('arbitrary')
     metadata.should_not have_field('ARBITRARY')
-    metadata.arbitrary = '42'
+    metadata['arbitrary'] = '42'
     metadata.should have_field('ARBITRARY')
     metadata.should have_field('arbitrary')
 
@@ -52,6 +52,22 @@ shared_examples_for "AudioMetadata" do
       metadata = described_class.new(artist: 'Wilco', album: 'The Whole Love')
       metadata.artist.should == 'Wilco'
       metadata.album.should == 'The Whole Love'
+    end
+  end
+
+  context "#each" do
+    it "yields the field_name and associated value(s)" do
+      metadata.artist = 'Nirvana'
+      metadata['genre'] = %w[Rock Grunge]
+      metadata.each do |name, val|
+        case name
+        when /genre/i
+          val.should == %w[Rock Grunge]
+        when /artist/i
+          val.should == 'Nirvana'
+        end
+        
+      end
     end
   end
 end
