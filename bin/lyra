@@ -35,6 +35,19 @@ command :'disc-info' do |c|
   end
 end
 
+desc 'Print MusicBrainz metadata for the disc in the CD-ROM drive'
+arg_name '[device_path]'
+command :'print-metadata' do |c|
+  c.desc 'Print metadata for disc with DiscID instead of disc in drive'
+  c.flag 'discid'
+  c.action do |global_options, options, args|
+    device = args[0]
+    options[:device] = device if device
+    context = MetadataDisplay.new(options)
+    context.call
+  end
+end
+
 pre do |global,command,options,args|
   # Pre logic here
   # Return true to proceed; false to abort and not call the

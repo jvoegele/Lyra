@@ -11,3 +11,4 @@ require 'cd_device'
 require 'metadata'
 
 require 'commands/print_disc_info_command'
+require 'context/metadata_display'
